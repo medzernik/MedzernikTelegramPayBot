@@ -1,0 +1,4 @@
+# Server configurations
+# Bot token from telegram botfather.
+server:
+  token: ""
