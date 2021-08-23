@@ -10,6 +10,11 @@ type Config struct {
 	Server struct {
 		Token string `yaml:"token"`
 	}
+	AccountInfo struct {
+		Iban  string `yaml:"iban"`
+		Swift string `yaml:"swift"`
+		Name  string `yaml:"name"`
+	}
 }
 
 var Cfg Config

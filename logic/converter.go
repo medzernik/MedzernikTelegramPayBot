@@ -1,3 +1,4 @@
+// Package logic is the main logical package for the bot
 package logic
 
 import (

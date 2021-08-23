@@ -1,3 +1,4 @@
+// A custom telegram bot made to help with managing of finances while living in a country with a different currency than Euro (and still using Euro primarily).
 package main
 
 import (
@@ -6,6 +7,8 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"strconv"
+	"strings"
 )
 
 // Create a struct that mimics the webhook response body
@@ -27,7 +30,9 @@ func main() {
 
 	updates, err := bot.GetUpdatesChan(u)
 
-	go logic.Ready()
+	var amount float64 = 0.0
+
+	go logic.Ready(amount)
 
 	for update := range updates {
 		if update.Message == nil {
@@ -41,19 +46,48 @@ func main() {
 			switch update.Message.Command() {
 			case "help":
 				msg.Text = "type /sayhi or /status."
+				bot.Send(msg)
 			case "sayhi":
 				msg.Text = "Hi :)"
+				bot.Send(msg)
 			case "status":
 				msg.Text = "I'm ok."
+				bot.Send(msg)
 			case "withArgument":
 				msg.Text = "You supplied the following argument: " + update.Message.CommandArguments()
+				arguments := strings.Split(update.Message.CommandArguments(), " ")
+				fmt.Println("ARGUMENT\n\n", arguments[0])
+				bot.Send(msg)
 			case "html":
 				msg.ParseMode = "html"
 				msg.Text = "This will be interpreted as HTML, click <a href=\"https://www.example.com\">here</a>"
+				bot.Send(msg)
+			case "pay":
+				arguments := strings.Split(update.Message.CommandArguments(), " ")
+				floatAmount, err := strconv.ParseFloat(arguments[0], 64)
+				if err != nil {
+					msg.Text = "Invalid amount format"
+					bot.Send(msg)
+					fmt.Println("Invalid amount format")
+					break
+				}
+
+				logic.Ready(floatAmount)
+				msg.Text = "Paying MEDZERNIK " + arguments[0] + " EUROS INTO ACCOUNT. SCAN QR CODE IN BANK APP TO PAY."
+				bot.Send(msg)
+
+				msg1 := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "payCodeQR.png")
+
+				_, err = bot.Send(msg1)
+				if err != nil {
+					fmt.Println("ERROR: ", err)
+					return
+				}
+
 			default:
-				msg.Text = "I don't know that command"
+				msg.Text = "Error in syntax"
+				bot.Send(msg)
 			}
-			bot.Send(msg)
 
 		}
 
