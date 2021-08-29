@@ -15,7 +15,7 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	_, _ = logic.ConvertMoney(10, "EUR")
+	logic.ConvertIBANtoNumber("SK7609000000005176795612")
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
