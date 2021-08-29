@@ -15,6 +15,7 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
+	_, _ = logic.ConvertMoney(10, "EUR")
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -23,7 +24,7 @@ func main() {
 
 	bot.Debug = true
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	//log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -58,10 +59,23 @@ func main() {
 				arguments := strings.Split(update.Message.CommandArguments(), " ")
 				fmt.Println("ARGUMENT\n\n", arguments[0])
 				bot.Send(msg)
-			case "html":
-				msg.ParseMode = "html"
-				msg.Text = "This will be interpreted as HTML, click <a href=\"https://www.example.com\">here</a>"
+			case "conv":
+				arguments := strings.Split(update.Message.CommandArguments(), " ")
+
+				floatAmount, err1 := strconv.ParseFloat(arguments[0], 64)
+				if err1 != nil {
+					msg.Text = "Invalid amount format"
+					bot.Send(msg)
+					fmt.Println("Invalid amount format")
+					break
+				}
+
+				currency := strings.ToUpper(arguments[1])
+
+				converted, currency_conv := logic.ConvertMoney(floatAmount, currency)
+				msg.Text = "Conversion is: " + currency_conv + " " + strconv.FormatFloat(converted, 'f', 2, 64) + " "
 				bot.Send(msg)
+
 			case "pay":
 				arguments := strings.Split(update.Message.CommandArguments(), " ")
 				floatAmount, err := strconv.ParseFloat(arguments[0], 64)

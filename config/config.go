@@ -22,7 +22,7 @@ var Cfg Config
 func Initialization() {
 
 	readFile(&Cfg)
-	fmt.Printf("%+v", Cfg)
+	//fmt.Printf("%+v", Cfg)
 }
 
 func processError(err error) {

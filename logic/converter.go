@@ -4,11 +4,24 @@ package logic
 import (
 	"fmt"
 	financie "github.com/pieterclaerhout/go-finance"
-	"golang.org/x/text/currency"
+	"strings"
 )
 
-func initialization() {
-	fmt.Println()
+func ConvertMoney(amount float64, convertTo string) (float64, string) {
 
-	financie.ConvertRate(10, currency.TRY.String(), currency.AUD.String())
+	var convertFrom string
+
+	convertTo = strings.ToUpper(convertTo)
+	if strings.Contains(convertTo, "CZK") == true {
+		convertFrom = "EUR"
+	} else {
+		convertFrom = "CZK"
+	}
+
+	converted, err := financie.ConvertRate(amount, convertTo, convertFrom)
+	if err != nil {
+		fmt.Println("ERROR CONV: ", err)
+	}
+
+	return converted, convertFrom
 }

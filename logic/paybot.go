@@ -25,7 +25,7 @@ func Ready(amount float64) {
 		iban:   config.Cfg.AccountInfo.Iban,
 	}
 
-	fmt.Println(currentInfo)
+	//fmt.Println(currentInfo)
 	GenerateCode(currentInfo)
 
 }
