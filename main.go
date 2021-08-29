@@ -15,7 +15,8 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	logic.ConvertIBANtoNumber("SK7609000000005176795612")
+	logic.ConvertIBANtoNumber("CZ54 0800 0000 0045 1328 7033")
+	//logic.ConvertIBANtoNumber("SK7609000000005176795612")
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -60,7 +61,20 @@ func main() {
 				fmt.Println("ARGUMENT\n\n", arguments[0])
 				bot.Send(msg)
 			case "conv":
+				//TODO: HESLO: ZASTAVENY CAS
 				arguments := strings.Split(update.Message.CommandArguments(), " ")
+
+				var currencyTo string
+				if len(arguments) < 2 {
+					fmt.Println("Insufficient argument length")
+					return
+				} else if len(arguments) == 2 && strings.ToUpper(arguments[1]) == "CZK" {
+					currencyTo = "EUR"
+				} else if len(arguments) == 2 && strings.ToUpper(arguments[1]) == "EUR" {
+					currencyTo = "CZK"
+				} else if len(arguments) > 2 {
+					currencyTo = strings.ToUpper(arguments[2])
+				}
 
 				floatAmount, err1 := strconv.ParseFloat(arguments[0], 64)
 				if err1 != nil {
@@ -70,9 +84,9 @@ func main() {
 					break
 				}
 
-				currency := strings.ToUpper(arguments[1])
+				currencyFrom := strings.ToUpper(arguments[1])
 
-				converted, currency_conv := logic.ConvertMoney(floatAmount, currency)
+				converted, currency_conv := logic.ConvertMoney(floatAmount, currencyFrom, currencyTo)
 				msg.Text = "Conversion is: " + currency_conv + " " + strconv.FormatFloat(converted, 'f', 2, 64) + " "
 				bot.Send(msg)
 
