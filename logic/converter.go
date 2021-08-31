@@ -29,10 +29,6 @@ func CheckIBAN(ibanString string) (iban.IBAN, error) {
 	if err != nil {
 		fmt.Printf("%v\n", err)
 
-	} else {
-		fmt.Printf("%v\n", ibanNumber.PrintCode)
-		fmt.Printf("%v\n", ibanNumber.BBAN)
-
 	}
 	return *ibanNumber, err
 }
@@ -107,7 +103,7 @@ func ConvertIBANtoNumber(ibanString string) (NonIBANBankInfo, error) {
 	BankInfo.BankCode = VerifiedIBAN.BBAN[0:4]
 	BankInfo.BankName = CheckBankNameByCode(BankInfo.BankCode)
 
-	fmt.Println(BankInfo)
+	fmt.Printf("%+v\n", BankInfo)
 
 	return BankInfo, err
 

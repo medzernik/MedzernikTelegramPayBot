@@ -15,7 +15,6 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	logic.ConvertIBANtoNumber("CZ54 0800 0000 0045 1328 7033")
 	//logic.ConvertIBANtoNumber("SK7609000000005176795612")
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
@@ -55,13 +54,37 @@ func main() {
 			case "status":
 				msg.Text = "I'm ok."
 				bot.Send(msg)
-			case "withArgument":
-				msg.Text = "You supplied the following argument: " + update.Message.CommandArguments()
-				arguments := strings.Split(update.Message.CommandArguments(), " ")
-				fmt.Println("ARGUMENT\n\n", arguments[0])
+			case "ibantoacc":
+				arguments := update.Message.CommandArguments()
+
+				var ibanString string
+
+				if len(arguments) < 2 {
+					fmt.Println("Insufficient argument length")
+					return
+
+				} else {
+					ibanString = strings.ToUpper(arguments)
+				}
+				fmt.Println(ibanString)
+
+				ibanConverted, err1 := logic.ConvertIBANtoNumber(ibanString)
+				if err1 != nil {
+					msg.Text = err1.Error()
+					bot.Send(msg)
+					fmt.Println(err1)
+					return
+				}
+
+				msg.Text = "Forenumber: \t" + ibanConverted.AccountNumberPredcislie + "\n" +
+					"Number: \t" + ibanConverted.AccountNumberMain + "\n" +
+					"Bank code: \t" + ibanConverted.BankCode + "\n" +
+					"Bank name: \t" + ibanConverted.BankName + "\n" +
+					"-----------\n" +
+					"Copyfriendly: \t" + ibanConverted.AccountNumberPredcislie + ibanConverted.AccountNumberMain + "/" + ibanConverted.BankCode
 				bot.Send(msg)
 			case "conv":
-				//TODO: HESLO: ZASTAVENY CAS
+
 				arguments := strings.Split(update.Message.CommandArguments(), " ")
 
 				var currencyTo string
