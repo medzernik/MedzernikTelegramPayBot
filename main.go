@@ -15,7 +15,7 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	//logic.ConvertIBANtoNumber("SK7609000000005176795612")
+	logic.ConvertNumbertoIBAN("5176795612/0900")
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -61,7 +61,7 @@ func main() {
 
 				if len(arguments) < 2 {
 					fmt.Println("Insufficient argument length")
-					return
+					break
 
 				} else {
 					ibanString = strings.ToUpper(arguments)

@@ -9,7 +9,6 @@ import (
 )
 
 func ConvertMoney(amount float64, convertFrom string, convertTo string) (float64, string) {
-	//TODO: HESLO DIVE MAKY
 
 	convertTo = strings.ToUpper(convertTo)
 
@@ -33,6 +32,7 @@ func CheckIBAN(ibanString string) (iban.IBAN, error) {
 	return *ibanNumber, err
 }
 
+// CheckBankNameByCode Checks the bankname by the code of the bank (a map)
 func CheckBankNameByCode(bankID string) string {
 
 	//Updated in August 2021
@@ -74,7 +74,6 @@ func CheckBankNameByCode(bankID string) string {
 	banks["2310"] = "test"
 	banks["2310"] = "test"
 
-	//HESLO JE DIVE MAKY
 	bankName := banks[bankID]
 
 	return bankName
@@ -88,6 +87,7 @@ type NonIBANBankInfo struct {
 	AccountNumberMain       string
 }
 
+// ConvertIBANtoNumber Converts the IBAN to a number
 func ConvertIBANtoNumber(ibanString string) (NonIBANBankInfo, error) {
 	var BankInfo NonIBANBankInfo
 
@@ -109,6 +109,11 @@ func ConvertIBANtoNumber(ibanString string) (NonIBANBankInfo, error) {
 
 }
 
-func ConvertNumbertoIBAN(accountNumber string) {
+// ConvertNumbertoIBAN TODO: finish this function
+func ConvertNumbertoIBAN(accountNumber string) string {
+
+	accountNumberProcessed := strings.ReplaceAll(accountNumber, "/", "")
+
+	return accountNumberProcessed
 
 }
