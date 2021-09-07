@@ -15,7 +15,8 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	logic.ConvertNumbertoIBAN("5176795612/0900")
+	//logic.ConvertNumberToIBAN("5176795612/0900")
+	logic.GetCurrentGasPrice()
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -51,8 +52,15 @@ func main() {
 			case "sayhi":
 				msg.Text = "Hi :)"
 				bot.Send(msg)
-			case "status":
-				msg.Text = "I'm ok."
+			case "ethPrice":
+				msg.Text = "Hi :)"
+				bot.Send(msg)
+			case "gas":
+				price := logic.GetCurrentGasPrice()
+
+				for _, i := range price {
+					msg.Text += i + "\n"
+				}
 				bot.Send(msg)
 			case "ibantoacc":
 				arguments := update.Message.CommandArguments()
@@ -73,7 +81,7 @@ func main() {
 					msg.Text = err1.Error()
 					bot.Send(msg)
 					fmt.Println(err1)
-					return
+					break
 				}
 
 				msg.Text = "Forenumber: \t" + ibanConverted.AccountNumberPredcislie + "\n" +

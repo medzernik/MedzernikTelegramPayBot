@@ -10,7 +10,9 @@ require (
 require (
 	github.com/almerlucke/go-iban v0.0.0-20170112082528-316a6e2335b3
 	github.com/go-telegram-bot-api/telegram-bot-api v1.0.1-0.20201107014523-54104a08f947
+	github.com/hrharder/go-gas v1.0.1
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/superoo7/go-gecko v1.0.0
 )
 
 require (

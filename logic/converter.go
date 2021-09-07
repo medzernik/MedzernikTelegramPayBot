@@ -4,7 +4,11 @@ package logic
 import (
 	"fmt"
 	"github.com/almerlucke/go-iban/iban"
+	"github.com/hrharder/go-gas"
 	financie "github.com/pieterclaerhout/go-finance"
+	gecko "github.com/superoo7/go-gecko/v3"
+	"log"
+	"strconv"
 	"strings"
 )
 
@@ -109,11 +113,69 @@ func ConvertIBANtoNumber(ibanString string) (NonIBANBankInfo, error) {
 
 }
 
-// ConvertNumbertoIBAN TODO: finish this function
-func ConvertNumbertoIBAN(accountNumber string) string {
+// ConvertNumberToIBAN TODO: finish this function
+func ConvertNumberToIBAN(accountNumber string) string {
 
 	accountNumberProcessed := strings.ReplaceAll(accountNumber, "/", "")
 
 	return accountNumberProcessed
 
+}
+
+func GetCurrentGasPrice() []string {
+	// get a gas price in base units with one of the exported priorities (fast, fastest, safeLow, average)
+	fastestGasPrice, err := gas.SuggestGasPrice(gas.GasPriorityFastest)
+	if err != nil {
+		fmt.Println("ERROR: ", err)
+	}
+
+	// convenience wrapper for getting the fast gas price
+	fastGasPrice, err := gas.SuggestFastGasPrice()
+	if err != nil {
+		fmt.Println("ERROR: ", err)
+	}
+	safeGasPrice, err := gas.SuggestGasPrice(gas.GasPrioritySafeLow)
+	if err != nil {
+		fmt.Println("ERROR: ", err)
+	}
+	averageGasPrice, err := gas.SuggestGasPrice(gas.GasPriorityAverage)
+	if err != nil {
+		fmt.Println("ERROR: ", err)
+	}
+
+	ethPrice := GetETHCoinPrice()
+
+	fastestGasPriceFloatUSD := (float64(fastestGasPrice.Uint64()) * 0.00000000000001) * ethPrice
+	fastGasPriceFloatUSD := (float64(fastGasPrice.Uint64()) * 0.00000000000001) * ethPrice
+	safeGasPriceFloatUSD := (float64(safeGasPrice.Uint64()) * 0.00000000000001) * ethPrice
+	averageGasPriceFloatUSD := (float64(averageGasPrice.Uint64()) * 0.00000000000001) * ethPrice
+
+	var output []string
+	output = append(output, "Fastest gas price: \t"+strconv.FormatFloat(fastestGasPriceFloatUSD, 'f', 2, 64)+" USD")
+	output = append(output, "Fast gas price: \t"+strconv.FormatFloat(fastGasPriceFloatUSD, 'f', 2, 64)+" USD")
+	output = append(output, "Safe low gas price: \t"+strconv.FormatFloat(safeGasPriceFloatUSD, 'f', 2, 64)+" USD")
+	output = append(output, "Average gas price: \t"+strconv.FormatFloat(averageGasPriceFloatUSD, 'f', 2, 64)+" USD")
+	return output
+
+}
+
+func GetETHCoinPrice() float64 {
+
+	cg := gecko.NewClient(nil)
+
+	ids := []string{"bitcoin", "ethereum"}
+	vc := []string{"usd", "eur"}
+	sp, err := cg.SimplePrice(ids, vc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	eth := (*sp)["ethereum"]
+
+	ethUSD, err := strconv.ParseFloat(fmt.Sprintf("%f", eth["usd"]), 64)
+	if err != nil {
+		fmt.Println("ERROR CONVERTING STRING TO FLOAT: ", err)
+		return 0
+	}
+
+	return ethUSD
 }

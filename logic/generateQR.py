@@ -14,5 +14,6 @@ code = pay_by_square.generate(
 
 print(code)
 img = qrcode.make(code)
+
 img.save("payCodeQR.png")
 # img.show()
