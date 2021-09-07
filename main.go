@@ -62,6 +62,17 @@ func main() {
 					msg.Text += i + "\n"
 				}
 				bot.Send(msg)
+			case "gas2min":
+				//TODO: make a greenthread response parallel to the main catcher
+				/*
+					price := logic.GetCurrentGasPrice()
+
+					for _, i := range price {
+						msg.Text += i + "\n"
+					}
+					bot.Send(msg)
+
+				*/
 			case "ibantoacc":
 				arguments := update.Message.CommandArguments()
 
@@ -98,7 +109,7 @@ func main() {
 				var currencyTo string
 				if len(arguments) < 2 {
 					fmt.Println("Insufficient argument length")
-					return
+					break
 				} else if len(arguments) == 2 && strings.ToUpper(arguments[1]) == "CZK" {
 					currencyTo = "EUR"
 				} else if len(arguments) == 2 && strings.ToUpper(arguments[1]) == "EUR" {
@@ -140,7 +151,7 @@ func main() {
 				_, err = bot.Send(msg1)
 				if err != nil {
 					fmt.Println("ERROR: ", err)
-					return
+					break
 				}
 
 			default:
