@@ -7,6 +7,7 @@ import (
 	"github.com/hrharder/go-gas"
 	financie "github.com/pieterclaerhout/go-finance"
 	gecko "github.com/superoo7/go-gecko/v3"
+	"github.com/superoo7/go-gecko/v3/types"
 	"log"
 	"strconv"
 	"strings"
@@ -178,4 +179,46 @@ func GetETHCoinPrice() float64 {
 	}
 
 	return ethUSD
+}
+
+func GetCoinPrice(coin string) (*types.SimpleSinglePrice, error) {
+	cg := gecko.NewClient(nil)
+
+	price, err := cg.SimpleSinglePrice(coin, "usd")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println(price)
+
+	return price, nil
+
+}
+
+func TestFunction() {
+	cg := gecko.NewClient(nil)
+	rate, err := cg.ExchangeRates()
+	if err != nil {
+		log.Fatal(err)
+	}
+	r := (*rate)["usd"]
+	fmt.Println(r.Name)
+	fmt.Println(r.Unit)
+	fmt.Println(r.Value)
+	fmt.Println(r.Type)
+}
+
+func CoinInfo(coin string) (*types.CoinsID, error) {
+	cg := gecko.NewClient(nil)
+
+	coinInfo, err := cg.CoinsID(coin, false, false, false, false, false, false)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	fmt.Println(coinInfo)
+
+	return coinInfo, nil
+
 }

@@ -15,8 +15,8 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
-	//logic.ConvertNumberToIBAN("5176795612/0900")
-	logic.GetCurrentGasPrice()
+
+	logic.TestFunction()
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -52,8 +52,41 @@ func main() {
 			case "sayhi":
 				msg.Text = "Hi :)"
 				bot.Send(msg)
-			case "ethPrice":
-				msg.Text = "Hi :)"
+			case "coininfo":
+				arguments := strings.Split(update.Message.CommandArguments(), " ")
+
+				coinInfo, err := logic.CoinInfo(arguments[0])
+				if err != nil {
+					msg.Text = fmt.Sprintf("%s", err)
+					bot.Send(msg)
+					break
+				}
+
+				if len(arguments) < 1 {
+					fmt.Println("Insufficient arguments to call")
+					msg.Text = "Usage: /coin <COINNAME>"
+					bot.Send(msg)
+					break
+				}
+
+				msg.Text = fmt.Sprintf("%+v\n", coinInfo)
+				bot.Send(msg)
+			case "coin":
+				arguments := strings.Split(update.Message.CommandArguments(), " ")
+				if len(arguments) < 1 {
+					fmt.Println("Insufficient arguments to call")
+					msg.Text = "Usage: /coin <COINNAME>"
+					bot.Send(msg)
+					break
+				}
+				coinPrice, err := logic.GetCoinPrice(arguments[0])
+				if err != nil {
+					msg.Text = fmt.Sprintf("%s", err)
+					bot.Send(msg)
+					break
+				}
+
+				msg.Text = "The " + coinPrice.ID + " price is: " + strings.ToUpper(coinPrice.Currency) + " " + strconv.FormatFloat(float64(coinPrice.MarketPrice), 'f', 2, 64)
 				bot.Send(msg)
 			case "gas":
 				price := logic.GetCurrentGasPrice()
