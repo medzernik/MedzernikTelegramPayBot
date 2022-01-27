@@ -8,7 +8,8 @@ import (
 
 type Config struct {
 	Server struct {
-		Token string `yaml:"token"`
+		Token    string `yaml:"token"`
+		Loglevel string `yaml:"loglevel"`
 	}
 	AccountInfo struct {
 		Iban  string `yaml:"iban"`

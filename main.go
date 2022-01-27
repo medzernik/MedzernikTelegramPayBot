@@ -3,9 +3,11 @@ package main
 
 import (
 	"MedzernikTelegramPayBot/config"
+	"MedzernikTelegramPayBot/logging"
 	"MedzernikTelegramPayBot/logic"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/sirupsen/logrus"
 	"log"
 	"strconv"
 	"strings"
@@ -15,6 +17,16 @@ import (
 // https://core.telegram.org/bots/api#update
 func main() {
 	config.Initialization()
+	logging.Log.Traceln("Loaded the config file.")
+
+	//Initialize the logging system
+	errLogging := logging.StartLogging()
+	// If the log can't be created, use stdout.
+	if errLogging != nil {
+		logrus.Errorln("Failed to log to file, using default stderr")
+	} else {
+		logging.Log.Traceln("Loaded the logging system")
+	}
 
 	logic.TestFunction()
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.Server.Token)
